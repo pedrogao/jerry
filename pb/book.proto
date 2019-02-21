@@ -1,0 +1,39 @@
+// how to use? go to terminal and execute above
+// protoc -I  pb/ pb/book.proto --go_out=plugins=grpc:pb/
+
+
+syntax = "proto3";
+
+package pb;
+
+service Book {
+    rpc GetBook (GetBookRequest) returns (GetBookResponse) {
+    }
+
+    rpc SearchBook (SearchBookRequest) returns (SearchBookResponse) {
+    }
+}
+
+message GetBookRequest {
+    int32 id = 1;
+}
+
+message GetBookResponse {
+    int32 id = 1;
+    string title = 2;
+    string author = 3;
+    string summary = 4;
+    string image = 5;
+}
+
+message SearchBookRequest {
+    string keyword = 1;
+}
+
+message SearchBookResponse {
+    int32 id = 1;
+    string title = 2;
+    string author = 3;
+    string summary = 4;
+    string image = 5;
+}

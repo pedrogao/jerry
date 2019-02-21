@@ -1,0 +1,9 @@
+runmode: debug
+addr: :3000
+name: lin-server
+
+db:
+  name: lin-cms
+  addr: 127.0.0.1:3306
+  username: root
+  password: 123456

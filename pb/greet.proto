@@ -1,0 +1,22 @@
+// how to use? go to terminal and execute above
+// protoc -I rpc/pb/  rpc/pb/greet.proto --go_out=plugins=grpc:rpc/pb/
+
+syntax = "proto3";
+
+package pb;
+
+service Greeter {
+    rpc SayHello (HelloRequest) returns (HelloResponse) {
+    }
+
+    rpc SayHelloAgain (HelloRequest) returns (HelloResponse) {
+    }
+}
+
+message HelloRequest {
+    string name = 1;
+}
+
+message HelloResponse {
+    string message = 1;
+}
