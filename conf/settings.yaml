@@ -1,6 +1,6 @@
 runmode: debug
 addr: :3000
-name: lin-server
+name: jerry
 
 db:
   name: lin-cms
