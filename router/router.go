@@ -1,45 +1,39 @@
 package router
 
 import (
-	"github.com/PedroGao/jerry/controller/web"
-	"github.com/PedroGao/jerry/libs/err"
+	"github.com/PedroGao/jerry/controller"
+	"github.com/PedroGao/jerry/libs/erro"
 	"github.com/PedroGao/jerry/middleware"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func Load(app *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	// handle no route
 	app.NoRoute(func(c *gin.Context) {
-		c.JSON(err.NoRouteMatched.HTTPCode, err.NoRouteMatched.SetUrl(c.Request.URL.String()))
+		s := erro.NoRouteMatched.SetUrl(c.Request.URL.String())
+		c.JSON(http.StatusNotFound, s)
 	})
 
 	// handle no method
 	app.NoMethod(func(c *gin.Context) {
-		c.JSON(err.NoMethodMatched.HTTPCode, err.NoMethodMatched.SetUrl(c.Request.URL.String()))
+		s := erro.NoMethodMatched.SetUrl(c.Request.URL.String())
+		c.JSON(http.StatusForbidden, s)
 	})
 
 	// apply middleware
 	app.Use(middleware.CORS)
 	app.Use(middleware.NoCache)
 	app.Use(middleware.Secure)
-	app.Use(mw...)
+	app.Use(middleware.ErrorHandler)
 
-	//app.Use(middleware.ErrHandler)
+	app.Use(mw...)
 
 	// mount routes
 	// Example for binding JSON ({"user": "manu", "password": "123"})
-	app.POST("/login", middleware.RouteMeta("登陆", "用户"), web.Login)
-
 	user := app.Group("/user")
-	user.GET("/", middleware.RouteMeta("查询所有用户", "用户"), middleware.LoginRequired, web.GetUsers)
-
-	book := app.Group("/book")
-	book.GET("/search", middleware.RouteMeta("搜索书籍", "书籍"), web.SearchBook)
-
-	book.GET("/id/:id",
-		middleware.RouteMeta("查询书籍", "书籍"),
-		web.GetBook,
-		middleware.Logger("hhhh"))
+	user.GET("/", middleware.LoginRequired, controller.GetUsers)
+	user.POST("/login", controller.Login)
 
 	return app
 }

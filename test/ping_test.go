@@ -31,13 +31,12 @@ func TestUserLogin(t *testing.T) {
 		"nickname": "pedro",
 		"password": "123456",
 	})
-	req, _ := http.NewRequest("POST", "/login", strings.NewReader(s))
+	req, _ := http.NewRequest("POST", "/user/login", strings.NewReader(s))
 	app.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
 	bytes := w.Body.Bytes()
-	access := jsoniter.Get(bytes, "access_token")
-	refresh := jsoniter.Get(bytes, "refresh_token")
-	assert.NotEqual(t, "", refresh.ToString())
-	assert.NotEqual(t, "greeting from pedro", access.ToString())
+	token := jsoniter.Get(bytes, "token")
+	assert.NotEqual(t, "", token.ToString())
+	assert.NotEqual(t, "greeting from pedro", token.ToString())
 }

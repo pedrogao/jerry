@@ -8,7 +8,7 @@ type Login struct {
 	Password string `form:"password" json:"password" xml:"password" binding:"required"`
 }
 
-func (l Login) ValidateNameAndPassword() (error) {
+func (l Login) ValidateNameAndPassword() error {
 	if l.NickName != "pedro" || l.Password != "123456" {
 		return errors.New("用户名或密码不正确")
 	}
