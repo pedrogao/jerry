@@ -1,9 +1,14 @@
 runmode: debug
 addr: :3000
-name: lin-server
+name: jerry
+
+# token secret
+secret: \x88W\xf09\x91\x07\x98\x89\x87\x96\xa0A\xc68\xf9\xecJJU\x17\xc5V\xbe\x8b\xef\xd7\xd8\xd3\xe6\x95*4
+# token过期时间，单位是小时
+access_expire: 3
 
 db:
-  name: lin-cms
+  name: lin-cms4
   addr: 127.0.0.1:3306
   username: root
   password: 123456

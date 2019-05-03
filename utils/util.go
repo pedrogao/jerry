@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/modern-go/reflect2"
 	"github.com/teris-io/shortid"
 	"reflect"
 	"runtime"
@@ -30,4 +31,8 @@ func GetRouteName(c *gin.Context) string {
 
 func NameOfFunction(f interface{}) string {
 	return runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name()
+}
+
+func Name(f interface{}) {
+	reflect2.TypeOf(f)
 }

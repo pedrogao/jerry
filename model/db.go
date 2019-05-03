@@ -5,8 +5,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/core"
 	"github.com/go-xorm/xorm"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"log"
 )
 
 var DB *xorm.Engine
@@ -22,11 +22,11 @@ func openDB(username, password, addr, name string) *xorm.Engine {
 	//log.Println(config)
 	engine, err := xorm.NewEngine("mysql", config)
 	if err != nil {
-		log.Fatalf("%s, Database connection failed. Database name: %s", err, name)
+		log.Fatalf("%s, Database connection failed. Database name: %s \n", err, name)
 	}
 	err = engine.Ping()
 	if err != nil {
-		log.Fatalf("%s, Database is killed. Database name: %s", err, name)
+		log.Fatalf("%s, Database is killed. Database name: %s \n", err, name)
 	}
 	setupDB(engine)
 	return engine

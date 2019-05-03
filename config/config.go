@@ -2,7 +2,7 @@ package config
 
 import (
 	"github.com/fsnotify/fsnotify"
-	"github.com/lexkong/log"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"strings"
 )
@@ -31,7 +31,7 @@ func (c *Config) initConfig() error {
 	}
 	viper.SetConfigType("yaml")
 	viper.AutomaticEnv()
-	viper.SetEnvPrefix("LIN")
+	viper.SetEnvPrefix("JERRY")
 
 	replacer := strings.NewReplacer(".", "_")
 	viper.SetEnvKeyReplacer(replacer)
@@ -45,6 +45,6 @@ func (c *Config) initConfig() error {
 func (c *Config) watchConfig() {
 	viper.WatchConfig()
 	viper.OnConfigChange(func(e fsnotify.Event) {
-		log.Infof("Config file changed: %s", e.Name)
+		log.Infof("Config file changed: %s \n", e.Name)
 	})
 }
