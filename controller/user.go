@@ -16,11 +16,13 @@ func Login(c *gin.Context) {
 		tokenStr string
 		err      error
 	)
+	// ATTENTION: 不要用MustBind，它会自动将 Content-Type 设置成 text/plain
 	if err = c.ShouldBindJSON(&login); err != nil {
-		c.Error(erro.ParamsErr.SetMsg("参数错误，请检查参数"))
+		c.Error(err)
 		return
 	}
 
+	// COMMAND: 在controller里面使用erro，在其他的地方使用 errors.New等原生的error
 	if err = login.ValidateNameAndPassword(); err != nil {
 		c.Error(erro.ParamsErr.SetMsg(err.Error()))
 		return
