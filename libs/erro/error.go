@@ -6,10 +6,10 @@ import (
 )
 
 type HttpErr struct {
-	ErrorCode int    `json:"error_code"` // specify error code
-	Msg       string `json:"msg"`        // error message
-	Url       string `json:"url"`        // url the user request
-	HttpCode  int    `json:"-"`
+	ErrorCode int         `json:"error_code"` // specify error code
+	Msg       interface{} `json:"msg"`        // error message
+	Url       string      `json:"url"`        // url the user request
+	HttpCode  int         `json:"-"`
 }
 
 func NewHttpErr(errorCode, httpCode int, msg string) *HttpErr {
@@ -21,7 +21,18 @@ func NewHttpErr(errorCode, httpCode int, msg string) *HttpErr {
 }
 
 func (h HttpErr) Error() string {
-	return h.Msg
+	switch m := h.Msg.(type) {
+	case string:
+		return m
+	case map[string]string:
+		total := ""
+		for k, v := range m {
+			total += fmt.Sprintf("%s: %s", k, v)
+		}
+		return total
+	default:
+		return ""
+	}
 }
 
 func (h *HttpErr) SetUrl(url string) *HttpErr {
@@ -39,18 +50,8 @@ func (h *HttpErr) Clear() *HttpErr {
 	return h
 }
 
-func (h *HttpErr) SetMsg(msg string) *HttpErr {
+func (h *HttpErr) SetMsg(msg interface{}) *HttpErr {
 	h.Msg = msg
-	return h
-}
-
-func (h *HttpErr) Add(msg string) *HttpErr {
-	h.Msg += " " + msg
-	return h
-}
-
-func (h *HttpErr) Addf(format string, args ...interface{}) *HttpErr {
-	h.Msg += " " + fmt.Sprintf(format, args...)
 	return h
 }
 
