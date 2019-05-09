@@ -3,8 +3,9 @@ package middleware
 import (
 	"fmt"
 	"github.com/PedroGao/jerry/libs/erro"
+	lv "github.com/PedroGao/jerry/libs/validator"
 	"github.com/gin-gonic/gin"
-	"gopkg.in/go-playground/validator.v8"
+	"gopkg.in/go-playground/validator.v9"
 	"net/http"
 	"unicode"
 )
@@ -21,17 +22,20 @@ func ErrorHandler(c *gin.Context) {
 		case erro.HttpErr:
 			writeHttpError(c, e1)
 		case validator.ValidationErrors:
+			//log.Infoln(e1.Translate(lv.Trans))
 			mapErrors := make(map[string]string)
 			for _, err := range e1 {
-				fieldName, mg := validationErrorToText(err)
-				mapErrors[fieldName] = mg
+				//fieldName, mg := validationErrorToText(err)
+				mapErrors[err.Field()] = err.Translate(lv.Trans)
 			}
 			writeParamError(c, mapErrors)
 		case *validator.ValidationErrors:
 			mapErrors := make(map[string]string)
 			for _, err := range *e1 {
-				fieldName, mg := validationErrorToText(err)
-				mapErrors[fieldName] = mg
+				//log.Infoln(err.Translate(lv.Trans))
+				//fieldName, mg := validationErrorToText(err)
+				//mapErrors[fieldName] = mg
+				mapErrors[err.Field()] = err.Translate(lv.Trans)
 			}
 			writeParamError(c, mapErrors)
 		default:
@@ -40,11 +44,11 @@ func ErrorHandler(c *gin.Context) {
 	}
 }
 
-func validationErrorToText(e *validator.FieldError) (string, string) {
-	runes := []rune(e.Field)
+func validationErrorToText(e validator.FieldError) (string, string) {
+	runes := []rune(e.Field())
 	runes[0] = unicode.ToLower(runes[0])
 	fieldName := string(runes)
-	switch e.Tag {
+	switch e.Tag() {
 	case "required":
 		return fieldName, fmt.Sprintf("%s is required", fieldName)
 	case "max":

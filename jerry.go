@@ -3,9 +3,11 @@ package main
 import (
 	"errors"
 	"github.com/PedroGao/jerry/config"
+	lv "github.com/PedroGao/jerry/libs/validator"
 	"github.com/PedroGao/jerry/model"
 	"github.com/PedroGao/jerry/router"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -32,6 +34,9 @@ func main() {
 
 	// set gin app run mode
 	gin.SetMode(viper.GetString("runmode"))
+
+	// 更换 v8 至 v9
+	binding.Validator = lv.New()
 
 	app := gin.Default()
 
