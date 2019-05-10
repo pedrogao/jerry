@@ -62,6 +62,8 @@ func (v *AwesomeValidator) lazyinit() {
 				return "密码"
 			case "nickname":
 				return "昵称"
+			case "confirm_password":
+				return "确认密码"
 			default:
 				return name
 			}

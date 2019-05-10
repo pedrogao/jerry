@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gopkg.in/go-playground/validator.v9"
 	"net/http"
+	"strings"
 	"unicode"
 )
 
@@ -46,10 +47,12 @@ func writeParamError(ctx *gin.Context, e1 validator.ValidationErrors) {
 		s        *erro.HttpErr
 	)
 	for _, err := range e1 {
+		param := err.Param()
 		finalStr = err.Translate(lv.Trans)
 		runes := []rune(err.StructField())
 		runes[0] = unicode.ToLower(runes[0])
 		fieldName := string(runes)
+		finalStr = replaceParam(param, finalStr)
 		mapErrors[fieldName] = finalStr
 	}
 	status := http.StatusBadRequest
@@ -62,6 +65,17 @@ func writeParamError(ctx *gin.Context, e1 validator.ValidationErrors) {
 		s = erro.ParamsErr.SetMsg(finalStr).SetUrl(ctx.Request.URL.String())
 	}
 	ctx.JSON(status, s)
+}
+
+func replaceParam(param, str string) string {
+	switch param {
+	case "Password":
+		var replacer = "输入密码"
+		res := strings.Replace(str, param, replacer, 1)
+		return res
+	default:
+		return str
+	}
 }
 
 func writeHttpError(ctx *gin.Context, httpErr erro.HttpErr) {

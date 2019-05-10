@@ -1,6 +1,10 @@
 package form
 
-import "errors"
+import (
+	"errors"
+	"github.com/PedroGao/jerry/libs/password"
+	"github.com/PedroGao/jerry/model"
+)
 
 // Binding from JSON
 type Login struct {
@@ -9,8 +13,14 @@ type Login struct {
 }
 
 func (l Login) ValidateNameAndPassword() error {
-	if l.Nickname != "pedro" || l.Password != "123456" {
-		return errors.New("用户名或密码不正确")
+	var user = model.UserModel{Username: l.Nickname}
+	has, _ := model.DB.Get(&user)
+	if !has {
+		return errors.New("用户不存在")
+	}
+	ok := password.ComparePassword([]byte(user.Password), []byte(l.Password))
+	if !ok {
+		return errors.New("密码错误")
 	}
 	return nil
 }
