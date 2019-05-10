@@ -7,6 +7,7 @@ import (
 	"gopkg.in/go-playground/validator.v9"
 	zh_translations "gopkg.in/go-playground/validator.v9/translations/zh"
 	"reflect"
+	"strings"
 	"sync"
 )
 
@@ -51,6 +52,20 @@ func (v *AwesomeValidator) lazyinit() {
 		v.validate = validator.New()
 		v.validate.SetTagName("binding")
 		// add any custom validations etc. here
+		v.validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
+			name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+			if name == "-" {
+				return ""
+			}
+			switch name {
+			case "password":
+				return "密码"
+			case "nickname":
+				return "昵称"
+			default:
+				return name
+			}
+		})
 	})
 }
 
