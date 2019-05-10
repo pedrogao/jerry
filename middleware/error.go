@@ -1,10 +1,10 @@
 package middleware
 
 import (
-	"fmt"
 	"github.com/PedroGao/jerry/libs/erro"
+	lv "github.com/PedroGao/jerry/libs/validator"
 	"github.com/gin-gonic/gin"
-	"gopkg.in/go-playground/validator.v8"
+	"gopkg.in/go-playground/validator.v9"
 	"net/http"
 	"unicode"
 )
@@ -21,38 +21,13 @@ func ErrorHandler(c *gin.Context) {
 		case erro.HttpErr:
 			writeHttpError(c, e1)
 		case validator.ValidationErrors:
-			mapErrors := make(map[string]string)
-			for _, err := range e1 {
-				fieldName, mg := validationErrorToText(err)
-				mapErrors[fieldName] = mg
-			}
-			writeParamError(c, mapErrors)
+			writeParamError(c, e1)
 		case *validator.ValidationErrors:
-			mapErrors := make(map[string]string)
-			for _, err := range *e1 {
-				fieldName, mg := validationErrorToText(err)
-				mapErrors[fieldName] = mg
-			}
-			writeParamError(c, mapErrors)
+			writeParamError(c, *e1)
 		default:
 			writeError(c, e.Err.Error())
 		}
 	}
-}
-
-func validationErrorToText(e *validator.FieldError) (string, string) {
-	runes := []rune(e.Field)
-	runes[0] = unicode.ToLower(runes[0])
-	fieldName := string(runes)
-	switch e.Tag {
-	case "required":
-		return fieldName, fmt.Sprintf("%s is required", fieldName)
-	case "max":
-		return fieldName, fmt.Sprintf("%s must be less or equal to %s", fieldName, e.Param)
-	case "min":
-		return fieldName, fmt.Sprintf("%s must be more or equal to %s", fieldName, e.Param)
-	}
-	return fieldName, fmt.Sprintf("%s: is not valid", fieldName)
 }
 
 func writeError(ctx *gin.Context, errString interface{}) {
@@ -64,12 +39,28 @@ func writeError(ctx *gin.Context, errString interface{}) {
 	ctx.JSON(status, s)
 }
 
-func writeParamError(ctx *gin.Context, errString interface{}) {
+func writeParamError(ctx *gin.Context, e1 validator.ValidationErrors) {
+	mapErrors := make(map[string]string)
+	var (
+		finalStr string
+		s        *erro.HttpErr
+	)
+	for _, err := range e1 {
+		finalStr = err.Translate(lv.Trans)
+		runes := []rune(err.StructField())
+		runes[0] = unicode.ToLower(runes[0])
+		fieldName := string(runes)
+		mapErrors[fieldName] = finalStr
+	}
 	status := http.StatusBadRequest
 	if ctx.Writer.Status() != http.StatusOK {
 		status = ctx.Writer.Status()
 	}
-	s := erro.ParamsErr.SetMsg(errString).SetUrl(ctx.Request.URL.String())
+	if len(mapErrors) > 1 {
+		s = erro.ParamsErr.SetMsg(mapErrors).SetUrl(ctx.Request.URL.String())
+	} else {
+		s = erro.ParamsErr.SetMsg(finalStr).SetUrl(ctx.Request.URL.String())
+	}
 	ctx.JSON(status, s)
 }
 

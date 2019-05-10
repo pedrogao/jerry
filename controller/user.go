@@ -28,7 +28,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	tokenStr, err = token.GenerateAccessToken(login.NickName)
+	tokenStr, err = token.GenerateAccessToken(login.Nickname)
 
 	if err != nil {
 		c.Error(erro.ParamsErr.SetMsg(err.Error()))
