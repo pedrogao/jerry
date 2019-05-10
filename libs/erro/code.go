@@ -10,14 +10,16 @@ const (
 	UserNotFoundCode    = 30000
 	ParamsErrCode       = 40000
 	ForbiddenCode       = 60000
+	UnauthorizedCode    = 70000
 )
 
 var (
 	OK              = NewHttpErr(OKCode, http.StatusOK, "OK!")
-	NoRouteMatched  = NewHttpErr(NoRouteMatchedCode, http.StatusNotFound, "sorry, there is no route the url matched")
-	NoMethodMatched = NewHttpErr(NoMethodMatchedCode, http.StatusForbidden, "sorry, there is no methods the action matched")
-	UnKnown         = NewHttpErr(UnKnownCode, http.StatusBadRequest, "sorry, ")
-	UserNotFound    = NewHttpErr(UserNotFoundCode, http.StatusNotFound, "sorry, no user found")
-	ParamsErr       = NewHttpErr(ParamsErrCode, http.StatusBadRequest, "parameter is erro")
-	Forbidden       = NewHttpErr(ForbiddenCode, http.StatusOK, "forbidden！you can't access the resource")
+	NoRouteMatched  = NewHttpErr(NoRouteMatchedCode, http.StatusNotFound, "路由不存在")
+	NoMethodMatched = NewHttpErr(NoMethodMatchedCode, http.StatusForbidden, "请求方法不允许")
+	UnKnown         = NewHttpErr(UnKnownCode, http.StatusBadRequest, "服务器未知错误")
+	UserNotFound    = NewHttpErr(UserNotFoundCode, http.StatusNotFound, "没有找到用户")
+	ParamsErr       = NewHttpErr(ParamsErrCode, http.StatusBadRequest, "参数错误")
+	Forbidden       = NewHttpErr(ForbiddenCode, http.StatusForbidden, "禁止访问")
+	Unauthorized    = NewHttpErr(UnauthorizedCode, http.StatusUnauthorized, "认证失败")
 )

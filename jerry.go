@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"github.com/PedroGao/jerry/config"
+	"github.com/PedroGao/jerry/libs/token"
 	lv "github.com/PedroGao/jerry/libs/validator"
 	"github.com/PedroGao/jerry/model"
 	"github.com/PedroGao/jerry/router"
@@ -30,7 +31,11 @@ func main() {
 
 	// init db
 	model.Init()
+	model.Sync()
 	defer model.Close()
+
+	// jwt
+	token.New()
 
 	// set gin app run mode
 	gin.SetMode(viper.GetString("runmode"))

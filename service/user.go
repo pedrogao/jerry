@@ -32,7 +32,7 @@ func ListUser() ([]*model.UserModel, error) {
 		},
 	}
 	// 3. 新建存放用户id的数组
-	var ids []uint64
+	var ids []int64
 	//ids := make([]uint64, 0)
 	for _, user := range users {
 		ids = append(ids, user.Id)
@@ -43,7 +43,7 @@ func ListUser() ([]*model.UserModel, error) {
 	// 5. 新建用户列表映射
 	userList := model.UserList{
 		Lock:  new(sync.Mutex),
-		IdMap: make(map[uint64]*model.UserModel, len(users)),
+		IdMap: make(map[int64]*model.UserModel, len(users)),
 	}
 
 	// 6. 新建错误、完成通道

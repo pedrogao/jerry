@@ -34,6 +34,7 @@ func Load(app *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	user := app.Group("/user")
 	user.GET("/", middleware.LoginRequired, controller.GetUsers)
 	user.POST("/login", controller.Login)
+	user.POST("/register", controller.Register)
 
 	return app
 }

@@ -5,10 +5,27 @@ import (
 	"github.com/PedroGao/jerry/form"
 	"github.com/PedroGao/jerry/libs/erro"
 	"github.com/PedroGao/jerry/libs/token"
+	"github.com/PedroGao/jerry/model"
 	"github.com/PedroGao/jerry/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
+
+func Register(c *gin.Context) {
+	var (
+		register form.Register
+		err      error
+	)
+	if err = c.ShouldBindJSON(&register); err != nil {
+		c.Error(err)
+		return
+	}
+	_, err = model.CreateUser(register.Nickname, register.Password)
+	if err != nil {
+		c.Error(erro.ParamsErr.SetMsg(err.Error()))
+	}
+	c.JSON(http.StatusOK, erro.OK)
+}
 
 func Login(c *gin.Context) {
 	var (
