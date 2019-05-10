@@ -46,6 +46,14 @@ func Init() {
 	DB = InitLocal()
 }
 
+func Sync() {
+	var e error
+	e = DB.Sync2(new(UserModel))
+	if e != nil {
+		log.Infoln(e)
+	}
+}
+
 func Close() {
 	DB.Close()
 }

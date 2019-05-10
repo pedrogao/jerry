@@ -5,31 +5,31 @@ import (
 	"github.com/PedroGao/jerry/libs/token"
 	"github.com/PedroGao/jerry/model"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 const (
 	AuthHeader = "Authorization"
 )
 
-// access when user is logined
+// authorization middleware, access the resource if token is correct or not
 func LoginRequired(c *gin.Context) {
 	authHeader := c.Request.Header.Get(AuthHeader)
 	if authHeader == "" {
-		c.Error(erro.Forbidden)
-		c.AbortWithStatus(http.StatusForbidden)
+		c.Error(erro.Unauthorized)
+		c.Abort()
 	} else {
-		indentify, err := token.VerifyAccessToken(authHeader)
+		claims, err := token.VerifyAccessTokenInHeader(authHeader)
 		if err != nil {
-			c.Error(erro.ParamsErr.SetMsg(err.Error()))
+			c.Error(erro.Unauthorized.SetMsg(err.Error()))
 			c.Abort()
 		} else {
+			indentify := claims["identify"].(string)
 			user := &model.UserModel{
 				Username: indentify,
 			}
 			ok, _ := model.DB.Get(user)
 			if !ok {
-				c.Error(erro.ParamsErr.SetMsg("用户未找到"))
+				c.Error(erro.Unauthorized.SetMsg("用户未找到"))
 				c.Abort()
 			} else {
 				c.Set("user", user)

@@ -10,7 +10,7 @@ type UserList struct {
 }
 
 type UserModel struct {
-	Id       uint64 `json:"id"`
+	Id       uint64 `xorm:"pk" json:"id"`
 	Username string `json:"username"`
 	SayHello string `json:"say_hello"`
 	Password string `json:"password"`
